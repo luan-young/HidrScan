@@ -1,11 +1,16 @@
 package com.example.luan.hidrscan.utils;
 
+import android.graphics.Bitmap;
+
+import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -364,6 +369,18 @@ public class ImageProcessUtil {
         }
 
         return vertices;
+    }
+
+    static public float[] BitmapToNormalizedFloatArray(Bitmap image) {
+        Mat matImage = new Mat();
+        Utils.bitmapToMat(image, matImage);
+        Imgproc.cvtColor(matImage, matImage, Imgproc.COLOR_RGB2GRAY);
+        matImage.convertTo(matImage, CvType.CV_32F);
+        Core.add(matImage, new Scalar(-127.5), matImage);
+        Core.divide(matImage, new Scalar(255.0), matImage);
+        float arrImage[] = new float[(int)matImage.total() * matImage.channels()];
+        matImage.get(0,0, arrImage);
+        return arrImage;
     }
 }
 
