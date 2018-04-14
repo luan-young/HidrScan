@@ -382,6 +382,15 @@ public class ImageProcessUtil {
         matImage.get(0,0, arrImage);
         return arrImage;
     }
+
+    static public float[] MatToNormalizedFloatArray(Mat matImage) {
+        matImage.convertTo(matImage, CvType.CV_32F);
+        Core.add(matImage, new Scalar(-127.5), matImage);
+        Core.divide(matImage, new Scalar(255.0), matImage);
+        float arrImage[] = new float[(int)matImage.total() * matImage.channels()];
+        matImage.get(0,0, arrImage);
+        return arrImage;
+    }
 }
 
 class OrderedCorners {

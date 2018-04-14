@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int mCurrentDigitImgIdx = 0;
 
     private TensorFlowDigitClassifier classifier;
-    private Executor executor = Executors.newSingleThreadExecutor();
+//    private Executor executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,23 +74,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initTensorFlowAndLoadModel() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    classifier = TensorFlowDigitClassifier.create(
-                            getAssets(),
-                            MODEL_FILE,
-                            LABEL_FILE,
-                            INPUT_SIZE_Y,
-                            INPUT_SIZE_X,
-                            INPUT_NAME,
-                            OUTPUT_NAME);
-                } catch (final Exception e) {
-                    throw new RuntimeException("Error initializing TensorFlow!", e);
-                }
-            }
-        });
+
+//        executor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    classifier = TensorFlowDigitClassifier.create(
+//                            getAssets(),
+//                            MODEL_FILE,
+//                            LABEL_FILE,
+//                            INPUT_SIZE_Y,
+//                            INPUT_SIZE_X,
+//                            INPUT_NAME,
+//                            OUTPUT_NAME);
+//                } catch (final Exception e) {
+//                    throw new RuntimeException("Error initializing TensorFlow!", e);
+//                }
+//            }
+//        });
+
+        try {
+            classifier = TensorFlowDigitClassifier.create(
+                    getAssets(),
+                    MODEL_FILE,
+                    LABEL_FILE,
+                    INPUT_SIZE_Y,
+                    INPUT_SIZE_X,
+                    INPUT_NAME,
+                    OUTPUT_NAME);
+        } catch (final Exception e) {
+            throw new RuntimeException("Error initializing TensorFlow!", e);
+        }
     }
 
     /**
@@ -287,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void processNextStepAndShowResult() {
 
         if (mImageProcess.HasFinished() == false ) {
+            mCurrentDigitImgIdx = 0;
             mImageProcess.ProcessNextStep();
             this.showProcessingImage(mImageProcess.GetCurrImage());
         }
@@ -318,28 +333,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startNewClassificationFromTestDigit() {
 
-        int img = 0;
-        if (mCurrentDigitImgIdx == 0) img = R.raw.test_digit_0;
-        else if (mCurrentDigitImgIdx == 1) img = R.raw.test_digit_1;
-        else if (mCurrentDigitImgIdx == 2) img = R.raw.test_digit_2;
-        else if (mCurrentDigitImgIdx == 3) img = R.raw.test_digit_3;
-        else if (mCurrentDigitImgIdx == 4) img = R.raw.test_digit_4;
-        else if (mCurrentDigitImgIdx == 5) img = R.raw.test_digit_5;
-        else if (mCurrentDigitImgIdx == 6) img = R.raw.test_digit_6;
-        else if (mCurrentDigitImgIdx == 7) img = R.raw.test_digit_7;
-        else if (mCurrentDigitImgIdx == 8) img = R.raw.test_digit_8;
-        else if (mCurrentDigitImgIdx == 9) img = R.raw.test_digit_9;
+//        int img = 0;
+//        if (mCurrentDigitImgIdx == 0) img = R.raw.test_digit_0;
+//        else if (mCurrentDigitImgIdx == 1) img = R.raw.test_digit_1;
+//        else if (mCurrentDigitImgIdx == 2) img = R.raw.test_digit_2;
+//        else if (mCurrentDigitImgIdx == 3) img = R.raw.test_digit_3;
+//        else if (mCurrentDigitImgIdx == 4) img = R.raw.test_digit_4;
+//        else if (mCurrentDigitImgIdx == 5) img = R.raw.test_digit_5;
+//        else if (mCurrentDigitImgIdx == 6) img = R.raw.test_digit_6;
+//        else if (mCurrentDigitImgIdx == 7) img = R.raw.test_digit_7;
+//        else if (mCurrentDigitImgIdx == 8) img = R.raw.test_digit_8;
+//        else if (mCurrentDigitImgIdx == 9) img = R.raw.test_digit_9;
+//
+//        mCurrentDigitImgIdx = (mCurrentDigitImgIdx + 1) % 10;
+//
+//        InputStream imageStream = this.getResources().openRawResource(img);
+//        Bitmap digitImage = BitmapFactory.decodeStream(imageStream);
+//
+//        float arrImage[] = BitmapToNormalizedFloatArray(digitImage);
+//
+//        String result = classifier.recognizeImage(arrImage);
+//
+//        this.mViewHolder.mImageProcessing.setImageBitmap(digitImage);
+//        mViewHolder.mTextClassificationResult.setText(result);
 
-        mCurrentDigitImgIdx = (mCurrentDigitImgIdx + 1) % 10;
+        if (mImageProcess.HasFinished() == false ) {
+            return;
+        }
 
-        InputStream imageStream = this.getResources().openRawResource(img);
-        Bitmap digitImage = BitmapFactory.decodeStream(imageStream);
-
-        float arrImage[] = BitmapToNormalizedFloatArray(digitImage);
-
+        float arrImage[] = mImageProcess.GetDigitArray(mCurrentDigitImgIdx);
         String result = classifier.recognizeImage(arrImage);
 
-        this.mViewHolder.mImageProcessing.setImageBitmap(digitImage);
         mViewHolder.mTextClassificationResult.setText(result);
+
+        mCurrentDigitImgIdx = (mCurrentDigitImgIdx + 1) % 6;
     }
 }

@@ -200,14 +200,44 @@ public class ImageProcess {
 
             mFinished = true;
 
-            MakeDigitSquares();
+            DrawDigitSquares();
 
             mCurrentImage = mTransformedImage.clone();
         }
 
     }
 
-    private void MakeDigitSquares() {
+    public float[] GetDigitArray(int digitIdx) {
+
+        if (mFinished == false) {
+            return null;
+        }
+
+        final double xsz = arrSquaresParamsX[0];
+        final double xoff = arrSquaresParamsX[1];
+        final double xdisp = arrSquaresParamsX[2];
+        final double ysz = arrSquaresParamsY[0];
+        final double yoff = arrSquaresParamsY[1];
+
+        Point ptUL = new Point(mTemplateCornersXY.get(0).x + xoff, mTemplateCornersXY.get(0).y + yoff);
+        Point ptBR = new Point(ptUL.x + xsz, ptUL.y + ysz);
+
+        int i = 0;
+        for (; i < digitIdx; i++) {
+            ptUL.x = ptBR.x + xdisp;
+            ptBR.x = ptUL.x + xsz;
+        }
+        Mat digit = mTransformedImage.submat(
+                (int)Math.round(ptUL.y),
+                (int)Math.round(ptBR.y),
+                (int)Math.round(ptUL.x),
+                (int)Math.round(ptBR.x)).clone();
+        Imgproc.cvtColor(digit, digit, Imgproc.COLOR_RGB2GRAY);
+        Imgproc.resize(digit, digit, new Size(32, 68), 0, 0, Imgproc.INTER_CUBIC);
+        return ImageProcessUtil.MatToNormalizedFloatArray(digit);
+    }
+
+    private void DrawDigitSquares() {
 
         final double xsz = arrSquaresParamsX[0];
         final double xoff = arrSquaresParamsX[1];
