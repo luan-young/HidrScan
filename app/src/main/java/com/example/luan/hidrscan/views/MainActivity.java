@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             "file:///android_asset/tf_model_3conv_300relu_trained268000sampledigits.pb";
     private static final String LABEL_FILE =
             "file:///android_asset/labels.txt";
+
+    int mCurrentTestImgIdx = 0;
     int mCurrentDigitImgIdx = 0;
 
     private TensorFlowDigitClassifier classifier;
@@ -291,7 +293,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startNewImageProcessingFromTestPhoto() {
 
-        InputStream imageStream = this.getResources().openRawResource(R.raw.img_to_process_01);
+        int img = 0;
+        if (mCurrentTestImgIdx == 0) img = R.raw.img_to_process_00;
+        else if (mCurrentTestImgIdx == 1) img = R.raw.img_to_process_01;
+        else if (mCurrentTestImgIdx == 2) img = R.raw.img_to_process_02;
+        else if (mCurrentTestImgIdx == 3) img = R.raw.img_to_process_03;
+        else if (mCurrentTestImgIdx == 4) img = R.raw.img_to_process_04;
+        else if (mCurrentTestImgIdx == 5) img = R.raw.img_to_process_05;
+        else if (mCurrentTestImgIdx == 6) img = R.raw.img_to_process_06;
+        else if (mCurrentTestImgIdx == 7) img = R.raw.img_to_process_07;
+        else if (mCurrentTestImgIdx == 8) img = R.raw.img_to_process_08;
+        else if (mCurrentTestImgIdx == 9) img = R.raw.img_to_process_09;
+        mCurrentTestImgIdx = (mCurrentTestImgIdx + 1) % 10;
+
+        InputStream imageStream = this.getResources().openRawResource(img);
         Bitmap bitmapRotated = BitmapFactory.decodeStream(imageStream);
 
         mImageProcess.StartNewProcessing(bitmapRotated);
