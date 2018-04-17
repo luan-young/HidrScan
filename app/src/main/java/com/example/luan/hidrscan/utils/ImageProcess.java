@@ -455,7 +455,7 @@ public class ImageProcess {
             arrContoursPairsGrades[arrContoursPairsIdxOrderedByPerim[i]] += grade;
             Tuple<Integer, Integer> p = listContoursIdxPerms.get(i);
             int grB = arrContoursGradesMatchB[p.x];
-            int grL = arrContoursGradesMatchB[p.y];
+            int grL = arrContoursGradesMatchL[p.y];
             arrContoursPairsGrades[i] += (grB + grL);
         }
 
