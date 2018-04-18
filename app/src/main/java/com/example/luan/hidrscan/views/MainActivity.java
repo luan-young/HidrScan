@@ -376,11 +376,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        float arrImage[] = mImageProcess.GetDigitArray(mCurrentDigitImgIdx);
-        String result = classifier.recognizeImage(arrImage);
+        String allDigits = "";
+        for (int i = 0; i < 6; i++) {
+            float arrImage[] = mImageProcess.GetDigitArray(i);
+            String result = classifier.recognizeImage(arrImage);
+            allDigits += result;
+        }
 
-        mViewHolder.mTextClassificationResult.setText(result);
-
-        mCurrentDigitImgIdx = (mCurrentDigitImgIdx + 1) % 6;
+        mViewHolder.mTextClassificationResult.setText(allDigits);
     }
 }
